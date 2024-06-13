@@ -51,3 +51,11 @@ rmarkdown::render("kommuki_qm.Rmd")
 oder `kommuki_qm.Rmd` öffnen und auf den blauen knit button drücken.
 
 
+## was dahinter steckt
+- in `kommuki_qm.Rmd` werden checks gefahren für jede Datei in raw data .
+- funktionen sind in `functions.R`
+- zwischenergebnisse werden rausgeschrieben in results als json.
+- dann wird für jedes Excel ein Chunk geknittet (`datei_chunk.Rmd`). hier wird dann das jeweilige Json wieder eingelesen und die Ergebnisse werden dargestellt. 
+
+it's all a big mess. ich war müde :((
+
