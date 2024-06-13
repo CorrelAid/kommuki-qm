@@ -1,0 +1,23 @@
+Kommune
+Jahr
+Name der Beteiligung
+Ausschuss
+Thema
+Beschlussempfehlung
+Begründung
+Änderungen
+Antragsteller W
+Antragsteller M
+Antragsteller D
+im Ausschuss genehmigt
+im Rat genehmigt
+AGS
+Einwohnerzahl
+stärkste Fraktion
+Schulform
+Bundesland
+Klassenstufe
+urban/ländlich
+Status in echt
+Anmerkungen
+Ansprechpartner

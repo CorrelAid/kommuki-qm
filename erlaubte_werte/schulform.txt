@@ -1,0 +1,11 @@
+Grundschule
+Gesamtschule
+Hauptschule
+Realschule
+Gymnasium
+Förderschule
+Berufsbildende Schule
+KiTa
+nachholend
+sonstiges
+gemischt
