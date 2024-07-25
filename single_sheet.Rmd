@@ -1,0 +1,60 @@
+---
+title: "single datensatz"
+output: html_document
+date: "2024-06-12"
+params:
+  gsheet_name: "Kommuki PMF! Isernhagen 2023" 
+---
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(fs)
+
+#read results
+path <- fs::path("data", "results", paste0(params$gsheet_name, ".json"))
+print(path)
+results <- jsonlite::read_json(path)
+
+spalten <- results$spaltennamen
+werte <- results$werte
+
+
+all_werte_ok <- all(werte %>% map_lgl("is_ok"))
+overall_is_ok <- all(c(spalten$is_ok, all_werte_ok))
+
+overall_emoji <- ifelse(overall_is_ok, emojifont::emoji("white_check_mark"), emojifont::emoji("x"))
+```
+
+# `r params$gsheet_name` `r overall_emoji`
+
+
+```{r, results='asis'}
+emoji <- ifelse(spalten$is_ok, emojifont::emoji("white_check_mark"), emojifont::emoji("x"))
+
+
+  cat(paste("## Spaltennamen", emoji), sep = "\n")
+
+cat(paste(spalten$glues, "\n") %>% unlist(), sep = "\n\n")
+```
+```{r}
+
+emoji <- ifelse(all_werte_ok, emojifont::emoji("white_check_mark"), emojifont::emoji("x"))
+
+```
+
+## Werte `r emoji`
+
+
+```{r, results='asis'}
+for (variable in werte) {
+  emoji <- ifelse(variable$is_ok, emojifont::emoji("white_check_mark"), emojifont::emoji("x"))
+  cat(paste("###", variable$spaltenname, emoji), sep = "\n")
+  cat(paste(variable$glues, "\n") %>% unlist(), sep = "\n")
+}
+
+
+```
+
+

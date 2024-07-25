@@ -1,0 +1,92 @@
+---
+title: "Kommuki Quality Check"
+output: rmdformats::robobook
+date: "2024-06-12"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+
+library(tidyverse)
+library(fs)
+
+source("R/functions.R")
+
+erlaubt_spaltennamen <- read_lines("data/erlaubte_werte/spaltennamen.txt")
+erlaubt_ausschuss <- c(NA, read_lines("data/erlaubte_werte/ausschuss.txt"))
+erlaubt_schulform <- c(NA, read_lines("data/erlaubte_werte/schulform.txt"))
+erlaubt_bundesland <- read_lines("data/erlaubte_werte/bundesland.txt")
+erlaubt_status_echt <- c(NA, read_lines("data/erlaubte_werte/status_echt.txt"))
+erlaubt_status <- c(NA, read_lines("data/erlaubte_werte/status.txt"))
+erlaubt_urban_laendlich <- read_lines("data/erlaubte_werte/urban_laendlich.txt")
+```
+
+
+```{r}
+excel_dateien <- list.files("data/raw_data/", full.names = TRUE)
+```
+
+
+```{r}
+checks_results <- purrr::map(excel_dateien, function(dateiname) {
+  gsheet_name <- fs::path_ext_remove(fs::path_file(dateiname))
+  datensatz <- readxl::read_xlsx(dateiname, sheet = 1)
+
+  # spaltennamen
+  check_spaltennamen <- test_spaltennamen(datensatz, erlaubt_spaltennamen)
+  
+  # 
+  all_werte_checks <- list(
+    check_jahr = get_unique_values(datensatz, "Jahr"),
+    check_ausschuss = test_spaltenwerte(datensatz, "Ausschuss", erlaubt_ausschuss, make_long = TRUE),
+    check_im_ausschuss_genehmigt = test_spaltenwerte(datensatz, "im Ausschuss genehmigt", erlaubt_status),
+    check_im_rat_genehmigt = test_spaltenwerte(datensatz, "im Rat genehmigt", erlaubt_status),
+    check_einwohnerzahl = get_unique_values(datensatz, "Einwohnerzahl"),
+    check_staerkste_fraktion = get_unique_values(datensatz, "stärkste Fraktion"),
+    check_schulform = test_spaltenwerte(datensatz, "Schulform", erlaubt_schulform, make_long = TRUE),
+    check_urban_laendlich = test_spaltenwerte(datensatz, "urban/ländlich", erlaubt_urban_laendlich),
+    check_bundesland = test_spaltenwerte(datensatz, "Bundesland", erlaubt_bundesland),
+    check_status_echt = test_spaltenwerte(datensatz, "Status in echt", erlaubt_status_echt)
+  )
+
+  all_checks <- list(
+    name = gsheet_name,
+    spaltennamen = check_spaltennamen,
+    werte = all_werte_checks
+  )
+  j_path <- fs::path("data", "results", paste0(gsheet_name, ".json"))
+  j <- jsonlite::toJSON(all_checks, auto_unbox = TRUE)
+  write_lines(j, j_path)
+  return(all_checks)
+})
+
+```
+
+# Überblick
+
+```{r}
+checks_results %>% map_df(function(res) {
+  all_werte_ok <- all(map_lgl(res$werte, "is_ok"))
+  df <- tibble(datensatz = res$name,
+         spaltennamen = res$spaltennamen$is_ok,
+         spaltenwerte = all_werte_ok)
+  
+  df %>% 
+    mutate(spaltennamen = if_else(spaltennamen, emojifont::emoji("white_check_mark"), emojifont::emoji("x")),
+           spaltenwerte = if_else(spaltenwerte, emojifont::emoji("white_check_mark"), emojifont::emoji("x")))
+}) %>% knitr::kable()
+```
+
+
+
+```{r all, results='asis'}
+res <- lapply(checks_results, function(x) {
+  params <- list(gsheet_name = x$name)
+  knitr::knit_child(
+    'single_sheet.Rmd', envir = environment(), quiet = TRUE
+  )
+})
+cat(unlist(res), sep = '\n')
+
+```

@@ -1,16 +1,17 @@
 # Datenqualitätscheck Kommuki
 
-HIntergrund: für das Datenvorhaben Kommuki wird ein CMS aufgebaut (Strapi). 
-Die Daten liegen bisher bei Politik zum Anfassen e.V. als Google Sheets vor. 
-Das Team von PzA sammelt gerade alle Google Sheets zusammen und stellt sicher, dass
-die Daten in der [vorgegebenen Struktur](https://docs.google.com/spreadsheets/d/15cjCGNZHcAofvpUDDrsclkAp1BvolZFoO3GZetkFfE4/edit#gid=0) sind.
+Hintergrund: für das Datenvorhaben Kommuki gibt es ein CMS (Strapie), in das die Daten geladen werden über eine Hochlademaske.
 
-Die "finalen" Dateien sind in diesem [Google Ordner](https://drive.google.com/drive/folders/1ymtUBRhxO4o-yVhQ8hWD9AgPka-5MA6R).
+Die Daten liegen bei Politik zum Anfassen e.V. als Google Sheets vor und müssen einer Struktur entsprechen.
 
-Wenn kein Access, dann über HumHub Space von Monika/Gregor requesten.
+Dieses Projekt enthält 2 Dinge:
 
+1. einen Datenqualitätsreport (`kommuki_datenqualitaet.Rmd`)
+2. ein Datenbereinigungsskript um final noch ein paar kleinere Dinge zu bereinigen (`clean_data.R`) und ein csv zu erstellen, was in die Upload-Maske hochgeladen werden kann
 
-# Setup
+# Installation & Setup
+
+Für beide Dinge benötigen wir R Pakete. Diese installieren wir in der R Console. Hierzu den Command kopieren und mit Enter ausführen.
 
 ## Packages 
 
@@ -35,27 +36,55 @@ install.packages("emojifont")
 install.packages("fs")
 ```
 
-Rest dann nach Bedarf aka wenn Fehler auftauchen ;) 
+Rest dann nach Bedarf aka wenn Fehler auftauchen.
+
 
 ## Daten 
 
 - Daten aus Google Drive runterladen und entzippen
-- in `raw_data` verschieben
+- in `data/raw_data` verschieben
 
-# Report 
+# Datenqualitätsreport
+
+in der R Console:
 
 ```
-rmarkdown::render("kommuki_qm.Rmd")
+rmarkdown::render("kommuki_datenqualitaet.Rmd")
 ```
 
-oder `kommuki_qm.Rmd` öffnen und auf den blauen knit button drücken.
+oder `kommuki_datenqualitaet.Rmd` öffnen und auf den blauen knit Button mit dem Wollknäuel drücken.
 
 
-## was dahinter steckt
+## Wie es funktioniert 
+
 - in `kommuki_qm.Rmd` werden checks gefahren für jede Datei in raw data .
 - funktionen sind in `functions.R`
-- zwischenergebnisse werden rausgeschrieben in results als json.
-- dann wird für jedes Excel ein Chunk geknittet (`datei_chunk.Rmd`). hier wird dann das jeweilige Json wieder eingelesen und die Ergebnisse werden dargestellt. 
+- Zwischenergebnisse werden rausgeschrieben in `data/results` als json.
+- dann wird für jedes Excel ein Chunk geknittet (`single_sheet.Rmd`). hier wird dann das jeweilige JSON wieder eingelesen und die Ergebnisse werden dargestellt. 
 
-it's all a big mess. ich war müde :((
+geht sicher effizienter und schöner, aber war in der Kürze der Zeit das, was funktioniert hat. 
+
+# Datenbereinigungsskript
+
+1. `daten_bereinigen.R` öffnen und 
+
+
+# Lizenz
+
+## Daten
+
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+
+umfasst: alle Dateien in `data`
+
+Datensatz Kommuki, Politik zum Anfassen e.V., lizensiert unter [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+## Code 
+
+umfasst: alle Dateien außerhalb von `data`. 
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+MIT Lizenz, CorrelAid e.V.
+
 
