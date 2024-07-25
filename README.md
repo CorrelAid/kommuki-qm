@@ -7,13 +7,21 @@ Die Daten liegen bei Politik zum Anfassen e.V. als Google Sheets vor und müssen
 Dieses Projekt enthält 2 Dinge:
 
 1. einen Datenqualitätsreport (`kommuki_datenqualitaet.Rmd`)
-2. ein Datenbereinigungsskript um final noch ein paar kleinere Dinge zu bereinigen (`clean_data.R`) und ein csv zu erstellen, was in die Upload-Maske hochgeladen werden kann
+2. ein Datenbereinigungsskript um final noch ein paar kleinere Dinge zu bereinigen (`daten_bereinigen.R`) und ein csv zu erstellen, was in die Upload-Maske hochgeladen werden kann
+
 
 # Installation & Setup
 
-Für beide Dinge benötigen wir R Pakete. Diese installieren wir in der R Console. Hierzu den Command kopieren und mit Enter ausführen.
+## R & RStudio / Projekt öffnen
+
+1. [R und RStudio installieren](https://posit.co/download/rstudio-desktop/)
+2. dieses Projekt herunterladen (grüner Code Button -> Download as Zip)
+3. Projekt entzippen
+4. Doppelklick auf `kommuki_qm.Rproj` sollte das Projekt in RStudio öffnen.
 
 ## Packages 
+
+Wir brauchen bestimmte R Pakete. Diese installieren wir in der R Console. Hierzu den Command kopieren und mit Enter ausführen.
 
 renv installieren: 
 
